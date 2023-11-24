@@ -1,4 +1,4 @@
-###(Ongoing)This repository is my re-implementation of the project [visual-pushing-grasping](https://github.com/andyzeng/visual-pushing-grasping), focusing in simulation in CoppeliaSim
+###(On-going)This repository is my re-implementation of the project [visual-pushing-grasping](https://github.com/andyzeng/visual-pushing-grasping), focusing in simulation in CoppeliaSim.
 
 #### [24/11/2023]Init commit
 <!---
