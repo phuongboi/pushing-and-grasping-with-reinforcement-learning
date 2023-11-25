@@ -2,7 +2,7 @@
 
 #### [25/11/2023] Update two head grasp model
 * Only for grasping action
-* Using resnet18 as backbone and 2 prediction head (1 for orientation, 1 for location of grasping action)
+* Using mobilenetv2 as backbone and 2 prediction head (1 for orientation, 1 for location of grasping action)
 
 #### [24/11/2023] Init commit
 * Using light weight model mobilenetv2 replace for densnet121
