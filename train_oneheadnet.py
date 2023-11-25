@@ -9,7 +9,7 @@ from env import VrepEnvironment
 from matplotlib import pyplot as plt
 from IPython.display import clear_output
 from scipy import ndimage
-from models import Network
+from models import OneHeadNetwork
 
 class DQN:
     def __init__(self, model_path, env, lr, batch_size, gamma, eps_decay, eps_start, eps_end, initial_memory, memory_size):
@@ -28,9 +28,9 @@ class DQN:
         self.num_actions = 112*112*16
         self.num_action_orientations = 16
         self.num_action_positions = 112
-        self.action_space = np.zeros([112, 112, 112])
+        self.action_space = [112, 112, 16]
         self.input_shape = [224, 224]
-        self.model = Network()
+        self.model = OneHeadNetwork()
     #
     # def make_model(self):
     #     model = Network()
@@ -223,10 +223,10 @@ if __name__ == "__main__":
     eps_decay = 30000
     eps_start = 1
     eps_end = 0.1
-    initial_memory = 1000
+    initial_memory = 500
     memory_size = 3000#20 * initial_memory
     gamma = 0.99 # discount 0.5
-    num_episodes = 600
+    num_episodes = 500
     model_path = "weights/"
     print('Start training')
     model = DQN(model_path, env, lr, batch_size, gamma, eps_decay, eps_start, eps_end,initial_memory, memory_size)

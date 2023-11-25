@@ -11,6 +11,7 @@ import os
 from simulation import vrep
 import time
 import utils
+import cv2
 
 class VrepEnvironment():
     def __init__(self, is_testing):
@@ -20,7 +21,7 @@ class VrepEnvironment():
         self.workspace_limits = np.asarray([[-0.724, -0.276], [-0.224, 0.224], [-0.0001, 0.4]])
         self.heightmap_resolution = 0.004#0.002 # use 4mm resolution to reduce computation
         self.action_space = [112, 112, 16]
-        self.num_rotations = 8
+        self.num_rotations = 16
         self.no_change_count = [2, 2] if not is_testing else [0, 0]
 
         # Define colors for object meshes (Tableau palette)
@@ -387,8 +388,8 @@ class VrepEnvironment():
         action_idx = np.unravel_index(action, self.action_space)
     #    action_idx = action
         #print("action ind", action_idx)
-        pos_x, pos_y= action_idx[0], action_idx[1]
-        rot_angle = np.deg2rad(action_idx[2]*(360.0/self.num_rotations))
+        pos_y, pos_x= action_idx[0], action_idx[1]
+        rot_angle = np.deg2rad(action_idx[2]*(360.0*2/self.num_rotations)) # just 8 orientation
         primitive_position = [pos_x * self.heightmap_resolution + self.workspace_limits[0][0], pos_y * self.heightmap_resolution + self.workspace_limits[1][0], prev_valid_depth_heightmap[pos_y][pos_x] + self.workspace_limits[2][0]]
 
         if action_idx[2] <= 7: # define as push action
@@ -463,12 +464,82 @@ class VrepEnvironment():
             else:
                 self.no_change_count[1] += 1
         reward = 0.0
-        if action_idx[2] <= 7:
+        if grasp_success:
+            reward = 15.0
+        else:
             if change_detected:
-                    reward = 5.0
-            else:
-                if grasp_success:
-                    reward = 15.0
+                reward = 5.0
+        state = [color_heightmap, valid_depth_heightmap, depth_heightmap]
+        #print("color heightmap shape",color_heightmap.shape)
+        return state, reward, terminal
+
+    def twohead_grasp_step(self, action, prev_valid_depth_heightmap, prev_depth_heightmap):
+        action_location_idx, action_orientation_idx = action
+
+        pos_y, pos_x= np.unravel_index(action_location_idx, self.action_space[:2])
+        rot_angle = np.deg2rad(action_orientation_idx*(360.0/self.num_rotations))
+        primitive_position = [pos_x * self.heightmap_resolution + self.workspace_limits[0][0], pos_y * self.heightmap_resolution + self.workspace_limits[1][0], prev_valid_depth_heightmap[pos_y][pos_x] + self.workspace_limits[2][0]]
+
+        # fix robot out of space
+        if primitive_position[2] > 0.1:
+            primitive_position[2] = 0.001
+
+
+        # Initialize variables that influence reward
+        push_success = False
+        grasp_success = False
+        change_detected = False
+        terminal = False
+
+        # Execute primitive
+
+        grasp_success = self.grasp(primitive_position, rot_angle, self.workspace_limits)
+        print('Grasp successful: %r' % (grasp_success))
+
+        color_img, depth_img = self.get_camera_data()
+        depth_img = depth_img * self.cam_depth_scale # Apply depth scale from calibration
+        # Get heightmap from RGB-D image (by re-projecting 3D point cloud)
+        color_heightmap, depth_heightmap = utils.get_heightmap(color_img, depth_img, self.cam_intrinsics, self.cam_pose, self.workspace_limits, self.heightmap_resolution/2)
+        cv2.imwrite("figures/debug.jpg", color_heightmap)
+        valid_depth_heightmap = depth_heightmap.copy()
+        valid_depth_heightmap[np.isnan(valid_depth_heightmap)] = 0
+
+        # Reset simulation or pause real-world training if table is empty
+        stuff_count = np.zeros(valid_depth_heightmap.shape)
+        stuff_count[valid_depth_heightmap > 0.02] = 1
+        empty_threshold = 300
+        if self.is_sim and self.is_testing:
+            empty_threshold = 10
+        if np.sum(stuff_count) < empty_threshold or (self.is_sim and self.no_change_count[0] + self.no_change_count[1] > 10):
+            self.no_change_count = [0, 0]
+            if self.is_sim:
+                print('Not enough objects in view (value: %d)! Repositioning objects.' % (np.sum(stuff_count)))
+                terminal = True
+
+        # Detect changes
+        depth_diff = abs(depth_heightmap - prev_depth_heightmap)
+        depth_diff[np.isnan(depth_diff)] = 0
+        depth_diff[depth_diff > 0.3] = 0
+        depth_diff[depth_diff < 0.01] = 0
+        depth_diff[depth_diff > 0] = 1
+        change_threshold = 800
+        change_value = np.sum(depth_diff)
+        change_detected = change_value > change_threshold or grasp_success
+        print('Change detected: %r (value: %d)' % (change_detected, change_value))
+
+        if change_detected:
+                self.no_change_count[0] = 0
+        else:
+            self.no_change_count[0] += 1
+
+        reward = 0.0
+
+
+        if grasp_success:
+            reward = 15.0
+        else:
+            if change_detected:
+                reward = 5.0
         state = [color_heightmap, valid_depth_heightmap, depth_heightmap]
         #print("color heightmap shape",color_heightmap.shape)
         return state, reward, terminal
