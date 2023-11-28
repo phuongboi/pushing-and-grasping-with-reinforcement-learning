@@ -27,7 +27,7 @@
 * Open simulation/simulation.ttt in CoppeliaSim
 * Run `python train_oneheadnet.py` or `python train_twoheadgraspnet.py`
 ### Note
-* This repository is under experimenting and developing period,
+* This repository is under experimenting and developing period
 * Need to do more expreriment with one head model
 ### Reference
 * [1] https://github.com/andyzeng/visual-pushing-grasping
