@@ -1,4 +1,4 @@
-### This repository is my re-implementation of the project [visual-pushing-grasping](https://github.com/andyzeng/visual-pushing-grasping), focusing in simulation in CoppeliaSim and reduce computation complexity
+### This repository is my re-implementation of the project [visual-pushing-grasping](https://github.com/andyzeng/visual-pushing-grasping), focusing on simulation in CoppeliaSim and reduce computation complexity
 
 #### [25/11/2023] Update two head grasp model
 * Only for grasping action
@@ -8,7 +8,7 @@
 * Increase location map to 224x224 to improve precision
 * Add more 1 prediction head for pushing/grasping
 
-#### [24/11/2023] Init commit
+#### [24/11/2023] Single branch, end-to-end pipeline
 * End-to-end pipeline, single branch, replace densenet121 with mobilenetv2
 * No input rotation, modeling action space as a 3D tensor 112x112x16 (height map resolution=4mm, 8 angle rotations)
 * Only use RGB as input of network, depth information for z position
