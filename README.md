@@ -13,7 +13,7 @@
 * No input rotation, modeling action space as a 3D tensor 112x112x16 (height map resolution=4mm, 8 angle rotations)
 * Only use RGB as input of network, depth information for z position
 ##### CoppeliaSim simulation
-* The simulation scene when training `train_twoheadgraspnet.py`, model successfuly learn to find the object and do grasping action. Due to the limit of resolution (4mm instead of 2mm in original work), location prediction is sometime inaccurate. There is no pushing action so robot find difficult to handle complex scenerios. The scene record during training phase so there random action in sequence of actions.
+* The simulation scene when training `train_twoheadgraspnet.py`, robot successfuly learn to find the object and do grasping action. Due to the limit of resolution (4mm instead of 2mm in original work), location prediction is sometime inaccurate. There is no pushing action so robot find difficult to handle complex scenerios. The scene record during training phase so there random action in sequence of actions.
 ![alt text](https://github.com/phuongboi/pushing-and-grasping-with-reinforcement-learning/blob/main/figures/recording_2023_11_28-07_03-58.gif)
 
 ##### Training result
