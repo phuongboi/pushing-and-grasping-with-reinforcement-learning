@@ -18,6 +18,7 @@
 ![alt text](https://github.com/phuongboi/pushing-and-grasping-with-reinforcement-learning/blob/main/figures/recording_2023_11_28-07_03-58.gif)
 
 ##### Training result
+* Training result of two head grasp model
 ![alt text](https://github.com/phuongboi/pushing-and-grasping-with-reinforcement-learning/blob/main/figures/fig_14000.png)
 
 ### Requirements
@@ -26,7 +27,7 @@
 
 ### Setup
 * Open simulation/simulation.ttt in CoppeliaSim
-* Run `python train_oneheadnet.py` or `python train_twoheadgraspnet.py`
+* Run `python train_twoheadgraspnet.py`
 ### Note
 * This repository is under experimenting and developing period
 * Need to do more expreriment with one head model
