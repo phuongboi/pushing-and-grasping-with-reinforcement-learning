@@ -1,5 +1,8 @@
 ### This work is based on the project [visual-pushing-grasping](https://github.com/andyzeng/visual-pushing-grasping) control UR5 robot in CoppeliaSim(V-REP)
 * I do some major changes focus on reducing computation complexity by using lightweight network and a different way of modeling action space, reward.
+#### [10/12/2023] Update test script and weight
+* Update test script and pretrained weight
+* Test result [video](https://github.com/phuongboi/pushing-and-grasping-with-reinforcement-learning/blob/main/figures/recording_2023_12_10-15_55-17.avi)
 #### [25/11/2023] Update two head grasp model
 * Only for grasping action
 * Using mobilenetv2 as backbone and 2 prediction head (1 for 16 orientation, 1 for 112x112 location of grasping action)

@@ -97,7 +97,7 @@ class TwoHeadGraspNetwork(nn.Module):
         out_orient = self.orientation_head(img_feat_view)
         out_loc = self.location_head(img_feat)
         out_loc = out_loc.squeeze(1)
-        print(out_orient.shape, out_loc.shape)
+        #print(out_orient.shape, out_loc.shape)
 
 
         return out_orient, out_loc

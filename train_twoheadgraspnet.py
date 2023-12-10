@@ -45,7 +45,7 @@ class DQN:
 
             #action = np.random.randint(self.num_actions)
             action = [action_location_idx, action_orientaton_idx]
-            print("random action", action)
+            #print("random action", action)
             return action
 
         else:
@@ -53,12 +53,12 @@ class DQN:
             # action = np.argmax(q_value.cpu().detach().numpy())
             #print("using model")
             q_value_orient, q_value_loc = self.model(torch.from_numpy(input_image), torch.from_numpy(input_depth))
-            print("q_value_orient and q_value_loc", (q_value_orient.shape, q_value_loc.shape))
+            #print("q_value_orient and q_value_loc", (q_value_orient.shape, q_value_loc.shape))
             action_orientaton_idx = np.argmax(q_value_orient.detach().numpy()).squeeze()
             action_location_idx = np.argmax(q_value_loc.detach().numpy()).squeeze()
             #action_location_idx = np.unravel_index(action_location, (self.num_action_positions, self.num_action_positions))
             action =  [action_location_idx, action_orientaton_idx]
-            print(action)
+            #print(action)
 
         return action
 

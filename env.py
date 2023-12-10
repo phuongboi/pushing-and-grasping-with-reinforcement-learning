@@ -500,7 +500,7 @@ class VrepEnvironment():
         depth_img = depth_img * self.cam_depth_scale # Apply depth scale from calibration
         # Get heightmap from RGB-D image (by re-projecting 3D point cloud)
         color_heightmap, depth_heightmap = utils.get_heightmap(color_img, depth_img, self.cam_intrinsics, self.cam_pose, self.workspace_limits, self.heightmap_resolution/2)
-        cv2.imwrite("figures/debug.jpg", color_heightmap)
+        #cv2.imwrite("figures/debug.jpg", color_heightmap)
         valid_depth_heightmap = depth_heightmap.copy()
         valid_depth_heightmap[np.isnan(valid_depth_heightmap)] = 0
 
@@ -510,7 +510,7 @@ class VrepEnvironment():
         empty_threshold = 300
         if self.is_sim and self.is_testing:
             empty_threshold = 10
-        if np.sum(stuff_count) < empty_threshold or (self.is_sim and self.no_change_count[0] + self.no_change_count[1] > 10):
+        if np.sum(stuff_count) < empty_threshold or (self.is_sim and self.no_change_count[0] > 5):
             self.no_change_count = [0, 0]
             if self.is_sim:
                 print('Not enough objects in view (value: %d)! Repositioning objects.' % (np.sum(stuff_count)))
@@ -528,7 +528,7 @@ class VrepEnvironment():
         print('Change detected: %r (value: %d)' % (change_detected, change_value))
 
         if change_detected:
-                self.no_change_count[0] = 0
+            self.no_change_count[0] = 0
         else:
             self.no_change_count[0] += 1
 
